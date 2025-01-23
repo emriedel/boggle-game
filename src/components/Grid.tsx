@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { generateGrid } from "../utils/generateGrid";
-import { WORD_LIST } from "../data/words";
+import { loadWords } from "../utils/loadWords";
 
 const Grid: React.FC = () => {
   const [grid, setGrid] = useState<string[][]>(generateGrid());
@@ -8,7 +8,17 @@ const Grid: React.FC = () => {
   const [isDragging, setIsDragging] = useState(false);
 
   // State for feedback message
+  const [wordList, setWordList] = useState<Set<string>>(new Set());
   const [feedbackMessage, setFeedbackMessage] = useState<string | null>(null);
+
+  // Load the word list on component mount
+  useEffect(() => {
+    const fetchWords = async () => {
+      const words = await loadWords();
+      setWordList(words);
+    };
+    fetchWords();
+  }, []);
 
   const handleMouseDown = (rowIndex: number, colIndex: number) => {
     const cellKey = `${rowIndex}-${colIndex}`;
@@ -42,7 +52,7 @@ const Grid: React.FC = () => {
     // Check if the word is valid
     const word = currentWord();
     if (word.length >= 3) {
-      if (WORD_LIST.has(word)) {
+      if (wordList.has(word)) {
         setFeedbackMessage(`Valid word: "${word}"`);
       } else {
         setFeedbackMessage(`Invalid word: "${word}"`);
