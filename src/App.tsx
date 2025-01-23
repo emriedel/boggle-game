@@ -1,10 +1,12 @@
-const App = () => {
+import React from "react";
+import Grid from "./components/Grid";
+
+const App: React.FC = () => {
   return (
-    <div className="flex items-center justify-center h-screen bg-gray-100">
-      <h1 className="text-4xl font-bold text-blue-600">Hello, Boggle!</h1>
+    <div className="flex items-center justify-center min-h-screen bg-gray-100">
+      <Grid />
     </div>
   );
 };
 
 export default App;
-
