@@ -7,8 +7,9 @@ const Grid: React.FC = () => {
   const [selectedCells, setSelectedCells] = useState<string[]>([]);
   const [isDragging, setIsDragging] = useState(false);
 
-  // State for feedback message
+  // States
   const [wordList, setWordList] = useState<Set<string>>(new Set());
+  const [enteredWords, setEnteredWords] = useState<Set<string>>(new Set());
   const [feedbackMessage, setFeedbackMessage] = useState<string | null>(null);
 
   // Load the word list on component mount
@@ -52,8 +53,12 @@ const Grid: React.FC = () => {
     // Check if the word is valid
     const word = currentWord();
     if (word.length >= 3) {
-      if (wordList.has(word)) {
+      if (enteredWords.has(word)) {
+        setFeedbackMessage(`You already entered "${word}"`);
+        setSelectedCells([]); // Clear the selection
+      } else if (wordList.has(word)) {
         setFeedbackMessage(`Valid word: "${word}"`);
+        setEnteredWords((prev) => new Set(prev).add(word)); // Add word to entered words
       } else {
         setFeedbackMessage(`Invalid word: "${word}"`);
         setSelectedCells([]); // Clear the selection
@@ -93,6 +98,11 @@ const Grid: React.FC = () => {
         }`}
       >
         {feedbackMessage || "Start selecting letters"}
+      </div>
+
+      {/* Display entered words */}
+      <div className="mb-4 text-lg text-gray-700">
+        <strong>Entered Words:</strong> {Array.from(enteredWords).join(", ")}
       </div>
 
       {/* Grid */}
