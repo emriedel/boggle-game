@@ -11,6 +11,8 @@ const Grid: React.FC = () => {
   const [wordList, setWordList] = useState<Set<string>>(new Set());
   const [enteredWords, setEnteredWords] = useState<Set<string>>(new Set());
   const [feedbackMessage, setFeedbackMessage] = useState<string | null>(null);
+  const [timeRemaining, setTimeRemaining] = useState<number>(60); // Timer starts at 60 seconds
+  const [isGameOver, setIsGameOver] = useState<boolean>(false);
 
   // Load the word list on component mount
   useEffect(() => {
@@ -21,7 +23,24 @@ const Grid: React.FC = () => {
     fetchWords();
   }, []);
 
+  // Start the timer when the game begins
+  useEffect(() => {
+    if (timeRemaining <= 0) {
+      setIsGameOver(true); // End the game when the timer runs out
+      setFeedbackMessage("Time's up! Game over.");
+      return;
+    }
+
+    const timer = setInterval(() => {
+      setTimeRemaining((prev) => prev - 1);
+    }, 1000);
+
+    return () => clearInterval(timer); // Clean up the timer on component unmount
+  }, [timeRemaining]);
+
   const handleMouseDown = (rowIndex: number, colIndex: number) => {
+    if (isGameOver) return; // Prevent new word selection after the game ends
+
     const cellKey = `${rowIndex}-${colIndex}`;
     setSelectedCells([cellKey]); // Start a new selection
     setFeedbackMessage(null); // Clear feedback on new selection
@@ -29,7 +48,9 @@ const Grid: React.FC = () => {
   };
 
   const handleMouseEnter = (rowIndex: number, colIndex: number) => {
-    if (!isDragging) return;
+if (isGameOver) return;
+
+    if (!isDragging || isGameOver) return;
 
     const cellKey = `${rowIndex}-${colIndex}`;
     setSelectedCells((prev) => {
@@ -89,6 +110,11 @@ const Grid: React.FC = () => {
 
   return (
     <div className="flex flex-col items-center">
+      {/* Display the timer */}
+      <div className="mb-4 text-3xl font-bold text-gray-700">
+        Time Remaining: {timeRemaining}s
+      </div>
+      
       {/* Display feedback message */}
       <div
         className={`mb-4 text-2xl font-bold ${
