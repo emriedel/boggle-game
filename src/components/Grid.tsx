@@ -147,10 +147,8 @@ if (isGameOver) return;
                 onMouseDown={() => handleMouseDown(rowIndex, colIndex)}
                 onMouseEnter={() => handleMouseEnter(rowIndex, colIndex)}
                 onMouseUp={handleMouseUp}
-                className={`flex items-center justify-center w-16 h-16 text-2xl font-bold rounded-lg cursor-pointer ${
-                  isSelected
-                    ? "bg-green-500 text-white"
-                    : "bg-blue-500 text-white"
+                className={`flex items-center justify-center w-16 h-16 text-2xl font-bold rounded-full cursor-pointer transition-transform hover:scale-105 ${
+                  isSelected ? "bg-green-500 text-white" : "bg-blue-500 text-white"
                 }`}
               >
                 {letter}
